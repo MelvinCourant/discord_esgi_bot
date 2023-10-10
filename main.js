@@ -1,9 +1,9 @@
-const discord = require('discord.js');
-const bot = new discord.Client({intents: 3276799});
+const Discord = require('discord.js');
+const bot = new Discord.Client({intents: 3276799});
 const config = require('./config');
 const loadCommands = require('./loader/loadCommands');
 
-bot.commands = new discord.Collection();
+bot.commands = new Discord.Collection();
 bot.login(config.token);
 loadCommands(bot);
 
@@ -12,7 +12,11 @@ bot.on('ready', () => {
 });
 
 bot.on('messageCreate', async (message) => {
-    if (message.content === '!ping') {
-        bot.commands.get('ping').run(bot, message);
+    if (
+      message.content &&
+      !message.author.bot &&
+      message.channel.name === config.subscribeChannel
+    ) {
+        bot.commands.get('registerMember').run(bot, message);
     }
 });
