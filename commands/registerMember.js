@@ -2,7 +2,7 @@ const {Discord, EmbedBuilder} = require("discord.js");
 const memberRole = require('../config').memberRole;
 
 module.exports = {
-    name: 'saveMember',
+    name: 'registerMember',
 
     async run(bot, message) {
         let lastName = '';
