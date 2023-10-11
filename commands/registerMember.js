@@ -4,7 +4,7 @@ const memberRole = require('../config').memberRole;
 module.exports = {
     name: 'registerMember',
 
-    async run(bot, message) {
+    async run(bot, message, membersList) {
         let lastName = '';
         let firstName = '';
         let esgiClass = '';
@@ -67,6 +67,11 @@ module.exports = {
                 message.member.roles.add(role);
                 message.react('✅');
                 message.reply('🎉 Vous êtes inscrit, bienvenue !');
+                membersList.push({
+                    username: username,
+                    timer: 0,
+                    haveReceivePoints: false
+                });
                 console.log(`✅ ${firstName} ${lastName} ${esgiClass} (${username})`);
             }
         }

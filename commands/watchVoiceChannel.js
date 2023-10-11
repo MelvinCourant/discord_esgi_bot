@@ -15,12 +15,13 @@ module.exports = {
 
       if(userConnected.timer === maxTime) {
         userConnected.haveReceivePoints = true;
+        userConnected.timer = 0;
 
         const guild = bot.guilds.cache.get(config.guildId);
         guild.channels.cache.forEach((channel) => {
           if (channel.name === config.botChannel) {
             channel.send(
-              `<@${newState.member.user.id}> ta participation a été prise en compte !`
+              `🎉 <@${newState.member.user.id}> ta participation a été prise en compte ! Mais tu peux rester pour continuer à discuter 😉`
             );
           }
         });

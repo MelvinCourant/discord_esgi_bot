@@ -25,6 +25,14 @@ bot.on('ready', () => {
             }
         });
     });
+
+    guild.channels.cache.forEach((channel) => {
+        if (channel.name === config.botChannel) {
+            channel.send(
+              '👋 Hey !'
+            );
+        }
+    });
 });
 
 bot.on('messageCreate', async (message) => {
@@ -33,7 +41,13 @@ bot.on('messageCreate', async (message) => {
       !message.author.bot &&
       message.channel.name === config.subscribeChannel
     ) {
-        bot.commands.get('registerMember').run(bot, message);
+        bot.commands.get('registerMember').run(bot, message, membersList);
+    } else if(
+      message.content === "!points" &&
+      !message.author.bot &&
+      message.channel.name === config.botChannel
+    ) {
+        bot.commands.get('getPoints').run(bot, message, membersList);
     }
 });
 
