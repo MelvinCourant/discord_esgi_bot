@@ -4,8 +4,7 @@ const config = require('../config');
 module.exports = {
   name: 'watchVoiceChannel',
 
-  async run(bot, oldState, newState, userConnected) {
-    const maxTime = 10;
+  async run(bot, oldState, newState, userConnected, maxTime) {
     const minute = 36000;
     const voiceChannel = newState.channel;
     let timer;

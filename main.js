@@ -47,7 +47,7 @@ bot.on('messageCreate', async (message) => {
       !message.author.bot &&
       message.channel.name === config.botChannel
     ) {
-        bot.commands.get('getPoints').run(bot, message, membersList);
+        bot.commands.get('getPoints').run(bot, message, membersList, config.maxTime);
     }
 });
 
@@ -60,5 +60,5 @@ bot.on('voiceStateUpdate', async (oldState, newState) => {
         }
     });
 
-    bot.commands.get('watchVoiceChannel').run(bot, oldState, newState, userConnected);
+    bot.commands.get('watchVoiceChannel').run(bot, oldState, newState, userConnected, config.maxTime);
 });

@@ -6,5 +6,6 @@ module.exports = {
     subscribeChannel: 'inscription',
     botChannel: 'bot',
     memberRole: 'ESGI',
-    guildId: '1160979308626587739'
+    maxTime: 10,
+    guildId: '1160979308626587739',
 }

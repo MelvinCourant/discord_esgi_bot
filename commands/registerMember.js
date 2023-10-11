@@ -1,6 +1,7 @@
 const {Discord, EmbedBuilder} = require("discord.js");
 const memberRole = require('../config').memberRole;
 const api = require('../config').api;
+const fetch = require('node-fetch');
 
 module.exports = {
     name: 'registerMember',
@@ -75,29 +76,28 @@ module.exports = {
                 });
 
                 async function addInSheet() {
-                    function request() {
-                        fetch(api, {
-                            method: "POST",
-                            body: JSON.stringify({
-                                data: {
-                                    "Prénom": firstName,
-                                    "Nom": lastName,
-                                    "Classe": esgiClass,
-                                    "ID Discord": username,
-                                    "Points": 0
-                                }
-                            }),
-                            headers: {
-                                "Content-Type": "application/json"
+                    const request = await fetch(api, {
+                        method: "POST",
+                        body: JSON.stringify({
+                            data: {
+                                Prénom: firstName,
+                                Nom: lastName,
+                                Classe: esgiClass,
+                                Discord: username,
+                                Points: 0
                             }
-                        })
-                    }
+                        }),
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    });
 
-                    await request();
+                    if(!request.ok) {
+                        message.reply('Erreur lors de l\'ajout dans la base de données');
+                    }
                 }
 
                 addInSheet();
-                console.log(`✅ ${firstName} ${lastName} ${esgiClass} (${username})`);
             }
         }
 
