@@ -1,5 +1,6 @@
 const {Discord, EmbedBuilder} = require("discord.js");
 const memberRole = require('../config').memberRole;
+const api = require('../config').api;
 
 module.exports = {
     name: 'registerMember',
@@ -72,6 +73,30 @@ module.exports = {
                     timer: 0,
                     haveReceivePoints: false
                 });
+
+                async function addInSheet() {
+                    function request() {
+                        fetch(api, {
+                            method: "POST",
+                            body: JSON.stringify({
+                                data: {
+                                    "Prénom": firstName,
+                                    "Nom": lastName,
+                                    "Classe": esgiClass,
+                                    "ID Discord": username,
+                                    "Points": 0
+                                }
+                            }),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        })
+                    }
+
+                    await request();
+                }
+
+                addInSheet();
                 console.log(`✅ ${firstName} ${lastName} ${esgiClass} (${username})`);
             }
         }
