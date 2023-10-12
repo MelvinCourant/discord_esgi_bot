@@ -9,7 +9,7 @@ module.exports = {
     memberRole: 'ESGI',
     maxTime: 10,
     pointsSession: 1,
-    guildName: 'Test bot',
+    guildName: 'Summoners War Alcatraz ESGI',
     sessionDay: "jeudi",
     sessionStartHour: "21:00",
     sessionEndHour: "23:59",
