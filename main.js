@@ -35,6 +35,8 @@ bot.on('ready', () => {
             botChannel = channel;
         }
     });
+
+    startStopSession();
 });
 
 bot.on('messageCreate', async (message) => {
@@ -56,22 +58,56 @@ bot.on('messageCreate', async (message) => {
       message.content === '!start' &&
       message.author.username === config.devUsername
     ) {
-        bot.on('voiceStateUpdate', startSession);
-        botChannel.send(
-          '🎉 @everyone La session a commencé !'
-        );
+        startSession();
     } else if(
       message.content === '!stop' &&
       message.author.username === config.devUsername
     ) {
-        bot.removeListener('voiceStateUpdate', startSession);
-        botChannel.send(
-          '👋 @everyone La session est terminée !'
-        );
+        stopSession();
     }
 });
 
-async function startSession(oldState, newState) {
+function startStopSession() {
+    let date = new Date();
+    let day = date.toLocaleDateString('fr-FR', {weekday: 'long'});
+    let hour = date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+    let sessionStarted = false;
+
+    if(
+      day === config.sessionDay &&
+      hour >= config.sessionStartHour &&
+      hour <= config.sessionEndHour
+    ) {
+        startSession();
+        sessionStarted = true;
+    }
+
+    setInterval(() => {
+        date = new Date();
+        day = date.toLocaleDateString('fr-FR', {weekday: 'long'});
+        hour = date.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+        
+        if(
+          !sessionStarted &&
+          day === config.sessionDay &&
+          hour >= config.sessionStartHour &&
+          hour <= config.sessionEndHour
+        ) {
+            startSession();
+            sessionStarted = true;
+        } else if(
+          sessionStarted &&
+          (day !== config.sessionDay ||
+            hour < config.sessionStartHour ||
+            hour > config.sessionEndHour)
+        ) {
+            stopSession();
+            sessionStarted = false;
+        }
+    }, 36000)
+}
+
+async function launchCommand(oldState, newState) {
     let userConnected;
 
     membersList.forEach((member) => {
@@ -83,4 +119,18 @@ async function startSession(oldState, newState) {
     if(!userConnected.haveReceivePoints) {
         bot.commands.get('watchVoiceChannel').run(bot, oldState, newState, userConnected, config.maxTime, config.pointsSession);
     }
+}
+
+function startSession() {
+    bot.on('voiceStateUpdate', launchCommand);
+    botChannel.send(
+      '🏁 @everyone La session a commencé !'
+    );
+}
+
+function stopSession() {
+    bot.removeListener('voiceStateUpdate', launchCommand);
+    botChannel.send(
+      '👋 @everyone La session est terminée !'
+    );
 }

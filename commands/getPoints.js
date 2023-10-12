@@ -19,14 +19,12 @@ module.exports = {
             }
           });
 
-          if(!response.ok) {
-            message.reply('Une erreur est survenue, il est possible que tu ne sois pas comptabilisé dans la base de données.');
-          }
-
           return await response.json();
         }
 
         getMember(memberUsername).then((memberData) => {
+          if(memberData[0] === undefined) return message.reply("Tu n'es pas inscrit !");
+
           const memberTimer = member.timer;
           const points = memberData[0].Points;
 
