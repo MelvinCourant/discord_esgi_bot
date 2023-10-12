@@ -58,47 +58,64 @@ module.exports = {
             message.reply({ embeds: [errorMessage] });
         }
 
-        function checkRole() {
+        function verifyMember() {
             const role = message.guild.roles.cache.find(role => role.name === memberRole);
 
-            if(message.member.roles.cache.some(role => role.name === memberRole)) {
-                message.reply('❌ Vous êtes déjà inscrit');
-            } else {
-                const username = message.author.username;
-
-                message.member.roles.add(role);
-                message.react('✅');
-                message.reply('🎉 Vous êtes inscrit, bienvenue !');
-                membersList.push({
-                    username: username,
-                    timer: 0,
-                    haveReceivePoints: false
+            async function getMember(memberUsername) {
+                const response = await fetch(`${api}/search_or?Discord=${memberUsername}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 });
 
-                async function addInSheet() {
-                    const request = await fetch(api, {
-                        method: "POST",
-                        body: JSON.stringify({
-                            data: {
-                                Prénom: firstName,
-                                Nom: lastName,
-                                Classe: esgiClass,
-                                Discord: username,
-                                Points: 0
-                            }
-                        }),
-                        headers: {
-                            "Content-Type": "application/json"
-                        }
-                    });
-
-                    if(!request.ok) {
-                        message.reply('Erreur lors de l\'ajout dans la base de données');
-                    }
+                if(!response.ok) {
+                    message.reply('Une erreur est survenue');
                 }
 
-                addInSheet();
+                return await response.json();
             }
+
+            getMember(message.author.username).then((memberData) => {
+                if(memberData[0] !== undefined) {
+                    message.reply('❌ Vous êtes déjà inscrit');
+                } else {
+                    const username = message.author.username;
+
+                    message.member.roles.add(role);
+                    message.react('✅');
+                    message.reply('🎉 Vous êtes inscrit, bienvenue !');
+                    membersList.push({
+                        username: username,
+                        timer: 0,
+                        haveReceivePoints: false
+                    });
+
+                    async function addInSheet() {
+                        const request = await fetch(api, {
+                            method: "POST",
+                            body: JSON.stringify({
+                                data: {
+                                    Prénom: firstName,
+                                    Nom: lastName,
+                                    Classe: esgiClass,
+                                    Discord: username,
+                                    Points: 0
+                                }
+                            }),
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+
+                        if(!request.ok) {
+                            message.reply('Erreur lors de l\'ajout dans la base de données');
+                        }
+                    }
+
+                    addInSheet();
+                }
+            });
         }
 
         if(
@@ -108,7 +125,7 @@ module.exports = {
         ) {
             error();
         } else {
-            checkRole();
+            verifyMember();
         }
     }
 }
