@@ -9,8 +9,6 @@ module.exports = {
     const voiceChannel = newState.channel;
     let timer;
 
-    console.log(userConnected);
-
     function addPoints() {
       userConnected.timer++;
 

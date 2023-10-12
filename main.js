@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const bot = new Discord.Client({intents: 3276799});
+const bot = new Discord.Client({intents: 3276799, disableEveryone: false});
 const config = require('./config');
 const loadCommands = require('./loader/loadCommands');
 
@@ -8,6 +8,7 @@ bot.login(config.token);
 loadCommands(bot);
 
 let membersList = [];
+let botChannel;
 
 bot.on('ready', () => {
     console.log(`${bot.user.tag} est connecté !`);
@@ -31,6 +32,7 @@ bot.on('ready', () => {
             channel.send(
               '👋 Hey !'
             );
+            botChannel = channel;
         }
     });
 });
@@ -49,9 +51,27 @@ bot.on('messageCreate', async (message) => {
     ) {
         bot.commands.get('getPoints').run(bot, message, membersList, config.maxTime);
     }
+
+    if(
+      message.content === '!start' &&
+      message.author.username === config.devUsername
+    ) {
+        bot.on('voiceStateUpdate', startSession);
+        botChannel.send(
+          '🎉 @everyone La session a commencé !'
+        );
+    } else if(
+      message.content === '!stop' &&
+      message.author.username === config.devUsername
+    ) {
+        bot.removeListener('voiceStateUpdate', startSession);
+        botChannel.send(
+          '👋 @everyone La session est terminée !'
+        );
+    }
 });
 
-bot.on('voiceStateUpdate', async (oldState, newState) => {
+async function startSession(oldState, newState) {
     let userConnected;
 
     membersList.forEach((member) => {
@@ -63,4 +83,4 @@ bot.on('voiceStateUpdate', async (oldState, newState) => {
     if(!userConnected.haveReceivePoints) {
         bot.commands.get('watchVoiceChannel').run(bot, oldState, newState, userConnected, config.maxTime, config.pointsSession);
     }
-});
+}
