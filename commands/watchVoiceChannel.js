@@ -9,6 +9,8 @@ module.exports = {
     const voiceChannel = newState.channel;
     let timer;
 
+    console.log(userConnected);
+
     function addPoints() {
       userConnected.timer++;
 
@@ -16,7 +18,7 @@ module.exports = {
         userConnected.haveReceivePoints = true;
         userConnected.timer = 0;
 
-        const guild = bot.guilds.cache.get(config.guildId);
+        const guild = bot.guilds.cache.find((guild) => guild.name === config.guildName);
         guild.channels.cache.forEach((channel) => {
           if (channel.name === config.botChannel) {
             async function getMember() {
@@ -67,8 +69,7 @@ module.exports = {
 
     if (
       voiceChannel &&
-      userConnected.timer < maxTime &&
-      !userConnected.haveReceivePoints
+      userConnected.timer < maxTime
     ) {
       timer = setInterval(addPoints, minute);
 

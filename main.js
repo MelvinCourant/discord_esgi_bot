@@ -60,5 +60,7 @@ bot.on('voiceStateUpdate', async (oldState, newState) => {
         }
     });
 
-    bot.commands.get('watchVoiceChannel').run(bot, oldState, newState, userConnected, config.maxTime, config.pointsSession);
+    if(!userConnected.haveReceivePoints) {
+        bot.commands.get('watchVoiceChannel').run(bot, oldState, newState, userConnected, config.maxTime, config.pointsSession);
+    }
 });
