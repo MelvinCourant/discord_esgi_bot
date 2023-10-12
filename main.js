@@ -12,7 +12,7 @@ let membersList = [];
 bot.on('ready', () => {
     console.log(`${bot.user.tag} est connecté !`);
 
-    const guild = bot.guilds.cache.get(config.guildId);
+    const guild = bot.guilds.cache.find((guild) => guild.name === config.guildName);
 
     guild.members.fetch().then((members) => {
         members.forEach((member) => {
