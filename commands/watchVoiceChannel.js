@@ -36,11 +36,13 @@ module.exports = {
 
             getMember().then((memberData) => {
               const points = memberData[0].Points;
-              const newPoints = points + pointsSession;
-              const memberUsername = newState.member.user.username;
-              const memberId = newState.member.user.id;
 
-              fetch(`${config.api}/Discord/${memberUsername}`, {
+              if(points < 4) {
+                const newPoints = points + pointsSession;
+                const memberUsername = newState.member.user.username;
+                const memberId = newState.member.user.id;
+
+                fetch(`${config.api}/Discord/${memberUsername}`, {
                   method: 'PATCH',
                   headers: {
                     'Content-Type': 'application/json',
@@ -48,15 +50,16 @@ module.exports = {
                   body: JSON.stringify({
                     Points: newPoints,
                   })
-              })
-              .then(() => {
-                channel.send(
-                    `🎉 <@${memberId}> ta participation a été prise en compte ! Mais tu peux rester pour continuer à discuter 😉`
-                );
-              })
-              .catch((error) => {
-                console.log(error);
-              });
+                })
+                .then(() => {
+                  channel.send(
+                      `🎉 <@${memberId}> ta participation a été prise en compte ! Mais tu peux rester pour continuer à discuter 😉`
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+              }
             });
           }
         });
