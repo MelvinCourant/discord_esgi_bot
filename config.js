@@ -6,7 +6,7 @@ module.exports = {
     subscribeChannel: 'inscription',
     botChannel: 'bot',
     memberRole: 'ESGI',
-    maxTime: 1,
+    maxTime: 10,
     pointsSession: 1,
     guildName: 'Test bot',
 }
