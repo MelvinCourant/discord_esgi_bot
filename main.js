@@ -122,6 +122,13 @@ async function launchCommand(oldState, newState) {
 }
 
 function startSession() {
+    membersList.forEach((member) => {
+        if(member.haveReceivePoints) {
+            member.timer = 0;
+            member.haveReceivePoints = false;
+        }
+    });
+
     bot.on('voiceStateUpdate', launchCommand);
     botChannel.send(
       '🏁 @everyone La session a commencé !'
