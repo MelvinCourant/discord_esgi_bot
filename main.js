@@ -15,18 +15,6 @@ bot.on('ready', () => {
 
     const guild = bot.guilds.cache.find((guild) => guild.name === config.guildName);
 
-    guild.members.fetch().then((members) => {
-        members.forEach((member) => {
-            if (member.roles.cache.some((role) => role.name === config.memberRole)) {
-                membersList.push({
-                    username: member.user.username,
-                    timer: 0,
-                    haveReceivePoints: false,
-                });
-            }
-        });
-    });
-
     guild.channels.cache.forEach((channel) => {
         if (channel.name === config.botChannel) {
             channel.send(
@@ -122,12 +110,29 @@ async function launchCommand(oldState, newState) {
 }
 
 function startSession() {
-    membersList.forEach((member) => {
-        if(member.haveReceivePoints) {
-            member.timer = 0;
-            member.haveReceivePoints = false;
-        }
-    });
+    async function initMembers() {
+        const guild = bot.guilds.cache.find((guild) => guild.name === config.guildName);
+        await guild.members.fetch().then((members) => {
+            members.forEach((member) => {
+                if (member.roles.cache.some((role) => role.name === config.memberRole)) {
+                    membersList.push({
+                        username: member.user.username,
+                        timer: 0,
+                        haveReceivePoints: false,
+                    });
+                }
+            });
+        });
+
+        await membersList.forEach((member) => {
+            if(member.haveReceivePoints) {
+                member.timer = 0;
+                member.haveReceivePoints = false;
+            }
+        });
+    }
+
+    initMembers();
 
     bot.on('voiceStateUpdate', launchCommand);
     botChannel.send(

@@ -38,7 +38,7 @@ module.exports = {
               const points = memberData[0].Points;
 
               if(points < 4) {
-                const newPoints = points + pointsSession;
+                const newPoints = parseInt(points) + pointsSession;
                 const memberUsername = newState.member.user.username;
                 const memberId = newState.member.user.id;
 
