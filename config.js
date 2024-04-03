@@ -5,7 +5,7 @@ module.exports = {
     api: process.env.API,
     devUsername: "naiclc",
     subscribeChannel: 'inscription',
-    botChannel: 'la-zone-des-points',
+    botChannel: 'dev',
     memberRole: 'ESGI',
     maxTime: 10,
     pointsSession: 1,

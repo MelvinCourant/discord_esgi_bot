@@ -10,10 +10,35 @@ loadCommands(bot);
 let membersList = [];
 let botChannel;
 
+async function initMembers() {
+    const guild = bot.guilds.cache.find((guild) => guild.name === config.guildName);
+    membersList = [];
+    await guild.members.fetch().then((members) => {
+        members.forEach((member) => {
+            if (member.roles.cache.some((role) => role.name === config.memberRole)) {
+                membersList.push({
+                    username: member.user.username,
+                    timer: 0,
+                    haveReceivePoints: false,
+                });
+            }
+        });
+    });
+
+    await membersList.forEach((member) => {
+        if(member.haveReceivePoints) {
+            member.timer = 0;
+            member.haveReceivePoints = false;
+        }
+    });
+}
+
 bot.on('ready', () => {
     console.log(`${bot.user.tag} est connecté !`);
 
     const guild = bot.guilds.cache.find((guild) => guild.name === config.guildName);
+
+    initMembers();
 
     guild.channels.cache.forEach((channel) => {
         if (channel.name === config.botChannel) {
@@ -110,28 +135,6 @@ async function launchCommand(oldState, newState) {
 }
 
 function startSession() {
-    async function initMembers() {
-        const guild = bot.guilds.cache.find((guild) => guild.name === config.guildName);
-        await guild.members.fetch().then((members) => {
-            members.forEach((member) => {
-                if (member.roles.cache.some((role) => role.name === config.memberRole)) {
-                    membersList.push({
-                        username: member.user.username,
-                        timer: 0,
-                        haveReceivePoints: false,
-                    });
-                }
-            });
-        });
-
-        await membersList.forEach((member) => {
-            if(member.haveReceivePoints) {
-                member.timer = 0;
-                member.haveReceivePoints = false;
-            }
-        });
-    }
-
     initMembers();
 
     bot.on('voiceStateUpdate', launchCommand);

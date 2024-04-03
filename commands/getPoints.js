@@ -6,11 +6,15 @@ module.exports = {
 
   async run(bot, message, membersList, maxTime) {
     const authorUsername = message.author.username;
+    let alreadyReplied = false;
 
     membersList.forEach((member) => {
       const memberUsername = member.username;
 
-      if (memberUsername === authorUsername) {
+      if (
+          memberUsername === authorUsername &&
+          !alreadyReplied
+      ) {
         async function getMember(memberUsername) {
           const response = await fetch(`${api}/search_or?Discord=${memberUsername}`, {
             method: 'GET',
@@ -30,8 +34,10 @@ module.exports = {
 
           if (memberTimer === 0) {
             message.reply(`Tu as **${points} points**`);
+            alreadyReplied = true;
           } else {
             message.reply(`Tu as **${points} points**. Tu peux encore rester **${maxTime - memberTimer} minutes** pour avoir des points 👀`);
+            alreadyReplied = true;
           }
         });
       }
